@@ -104,4 +104,8 @@ The package-level documentation in [plugins/testamur-codex/README.md](plugins/te
 
 ## Releases
 
-GitHub release tags are the version boundary for this repository. Marketplace installation should remain traceable to an inspectable tag or commit.
+The first public release line is **v1.0.0**. GitHub release tags are the version boundary for this repository. Marketplace installation should remain traceable to an inspectable tag or commit.
+
+## License
+
+Testamur Plugins is licensed under the [Apache License 2.0](LICENSE).
