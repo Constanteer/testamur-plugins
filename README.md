@@ -22,6 +22,32 @@ It provides:
 
 It does not capture hidden model reasoning and it does not turn source exposure into durable reliance.
 
+## 5-minute first run
+
+Use one environment for Testamur core, the plugin doctor, and the Codex process. The shortest launch path is:
+
+```bash
+# 1. Confirm Testamur core and the MCP gateway are visible.
+command -v testamur
+command -v testamur-gateway-mcp
+
+# 2. From this repository, validate host wiring.
+python plugins/testamur-codex/scripts/doctor.py
+
+# 3. Register the official marketplace.
+codex plugin marketplace add Constanteer/testamur-plugins
+```
+
+Install **testamur-codex** from the Codex plugin manager, then start a **fresh Codex session from that same environment**. In the fresh session, ask Codex to fetch a documentation source through Testamur and preserve the exact revision used. Inspect the resulting observable provenance before adding any durable reliance claim.
+
+The first run has three deliberately separate facts:
+
+1. **Fetched / exposed** — the host can record that a source revision crossed the model boundary.
+2. **Relied** — durable reliance is recorded only when the workflow explicitly establishes it; exposure alone is not reliance.
+3. **Revalidated** — a later review can record a new judgment against a changed or stale revision; change/staleness is not itself invalidity or falsity.
+
+If the doctor is not ready, fix the reported environment wiring before debugging provenance semantics. A successful doctor proves installation wiring only; it does not verify a source.
+
 ## Prerequisite
 
 Install Testamur core first and make sure these commands are available in the environment used by your host:
@@ -72,6 +98,7 @@ recorded != verified
 fetched != relied
 changed != invalid
 stale != false
+EXPOSED_TO_MODEL != RELIED
 lineage != affectedness verdict
 ```
 
@@ -83,7 +110,7 @@ Claude Code, OpenCode and other MCP-capable hosts can use the core stdio server 
 testamur-gateway-mcp
 ```
 
-Host-specific wrappers should add lifecycle or UX integration without forking Testamur's state or semantics.
+Host-specific wrappers should add lifecycle or UX integration without forking Testamur's state or semantics. For MCP-only onboarding, first run the gateway directly in the same environment to distinguish transport/setup failures from host-adapter failures; then configure the client to launch that same command.
 
 ## Repository layout
 
