@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "testamur_source_gateway": {
+      "command": "python3",
+      "args": ["mcp/serve.py"],
+      "cwd": "."
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "constanteer",
+  "interface": {
+    "displayName": "Constanteer"
+  },
+  "plugins": [
+    {
+      "name": "testamur-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/testamur-codex"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

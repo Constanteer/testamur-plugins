@@ -1,0 +1,17 @@
+{
+  "name": "testamur-codex",
+  "version": "0.3.0",
+  "description": "Capture inspectable Codex provenance and route exact source access through the Testamur Source Gateway.",
+  "author": {
+    "name": "Constanteer"
+  },
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Testamur",
+    "shortDescription": "Preserve what Codex work depended on.",
+    "longDescription": "Capture local WorkSessions and tool activity while exposing a Testamur MCP Source Gateway that retains exact source revisions without recording hidden model reasoning.",
+    "developerName": "Constanteer",
+    "category": "Productivity"
+  }
+}
