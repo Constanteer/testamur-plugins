@@ -1,6 +1,6 @@
 {
   "name": "testamur-codex",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Capture inspectable Codex provenance, route exact source access through Testamur, and register GitHub branch monitor targets.",
   "author": {
     "name": "Constanteer"
