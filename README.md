@@ -1,137 +1,107 @@
-# Testamur plugins
+# Testamur Plugins
 
-Testamur integrations put source provenance and change/revalidation information inside coding-agent workflows.
+Official integrations for Testamur.
 
-The distribution source of record is the GitHub release stream for:
+This repository contains thin host adapters that connect coding agents and developer tools to the Testamur provenance, source-revision and revalidation model. The integrations do **not** implement a second Testamur runtime.
 
-`Constanteer/testamur-plugins`
+## Available integration
 
-The public install page is `plugins.html` in the Testamur site. Marketplaces are optional install/discovery layers; a release tag is the version boundary.
+### Codex
 
-## What you need first
+The native Codex plugin lives at:
 
-Testamur integrations currently expect the Testamur core package to be installed so these executables are on the host's PATH:
+```text
+plugins/testamur-codex/
+```
+
+It provides:
+
+- lifecycle hooks for observable session/tool activity;
+- a local MCP launcher for the Testamur Source Gateway;
+- a declarative `github_branch` monitor provider.
+
+It does not capture hidden model reasoning and it does not turn source exposure into durable reliance.
+
+## Prerequisite
+
+Install Testamur core first and make sure these commands are available in the environment used by your host:
 
 ```bash
 command -v testamur
 command -v testamur-gateway-mcp
 ```
 
-`testamur-gateway-mcp` is a stdio server, not an interactive CLI; start it through an MCP host rather than running it by itself.
+The core runtime is maintained in `Constanteer/testamur`.
 
-The plugin packages do not vendor the core runtime.
+## Install the Codex plugin
 
-## Monitor-provider boundary
-
-Projects and monitors are owned by Testamur core. A plugin that wants to add a new monitor target type should implement a **monitor target provider**: it receives provider-specific configuration and resolves that configuration to a canonical Testamur Source (by `source_id` or locator). Core then creates the Watch and attaches it to the selected Project.
-
-The Codex integration registers a declarative `github_branch` monitor target provider. It resolves an `owner/repository` plus branch name to that branch's GitHub commits Atom feed; Testamur core still creates the canonical Source and Watch and attaches the Watch to the selected Project. The lifecycle hooks and MCP Source Gateway remain separate capabilities.
-
-## Codex — native plugin
-
-The Codex package adds:
-
-- lifecycle hooks for observable session/tool activity;
-- a local MCP Source Gateway;
-- the same Testamur state/database contract used by the core CLI.
-
-Add the GitHub repository as a Codex plugin marketplace:
+Add this repository as a Codex plugin marketplace:
 
 ```bash
 codex plugin marketplace add Constanteer/testamur-plugins
 ```
 
-Then install **testamur-codex** from that marketplace in the Codex plugin manager.
+Then install **testamur-codex** from the Codex plugin manager.
 
 For reproducible environments, pin the marketplace to a release tag or exact commit instead of following the default branch.
 
-### Verify
+## Verify
 
-Start a new Codex session and confirm that the Testamur Source Gateway tools are available. Run a small provenance check such as:
+Start a fresh Codex session and try a source-provenance workflow such as:
 
 > Fetch this documentation through Testamur and preserve the exact revision used.
 
-The plugin must preserve these boundaries:
+Then inspect the observable provenance captured for the session.
+
+The integration preserves the Testamur semantic boundary:
 
 ```text
 recorded != verified
 fetched != relied
 changed != invalid
 stale != false
+lineage != affectedness verdict
 ```
-
-It never claims to capture hidden model reasoning.
-
-## Claude Code — MCP route
-
-Until a native Claude Code wrapper is published, use the portable local MCP server:
-
-```bash
-claude mcp add --transport stdio testamur -- testamur-gateway-mcp
-claude mcp list
-```
-
-A native Claude plugin can later add host-specific skills/hooks while keeping the same Testamur gateway and state.
-
-## OpenCode — MCP route
-
-OpenCode can start the same local stdio MCP server:
-
-```bash
-opencode mcp add testamur -- testamur-gateway-mcp
-opencode mcp list
-```
-
-If a native OpenCode package is published later, it should add host lifecycle behavior rather than fork the Testamur provenance model.
 
 ## Other MCP clients
 
-Configure a local stdio MCP server whose command is:
+Claude Code, OpenCode and other MCP-capable hosts can use the core stdio server directly:
 
 ```text
 testamur-gateway-mcp
 ```
 
-Environment/state overrides remain owned by Testamur. In particular, `TESTAMUR_HOME` selects the Testamur-owned state root and `TESTAMUR_DB` can point at an explicit database.
+Host-specific wrappers should add lifecycle or UX integration without forking Testamur's state or semantics.
 
-## Release and upgrade model
+## Repository layout
 
-Use GitHub Releases to answer three questions:
+```text
+.agents/plugins/marketplace.json     Codex marketplace manifest
+plugins/testamur-codex/              native Codex plugin
+tests/                               repository-level package tests
+```
 
-1. **What version did I install?** — the release tag.
-2. **What changed?** — release notes and the inspectable source diff.
-3. **What artifact did I run?** — a release asset, package source, or exact tagged checkout.
+The `.agents/plugins/marketplace.json` file is part of the distribution surface and is intentionally committed.
 
-Do not rely on an opaque marketplace build as the only version identifier.
+## State
 
-When upgrading a pinned environment, read the release notes, update to the intended tag, then verify the host can still see the Testamur MCP tools.
+Integrations use Testamur-owned state:
 
-## First prompts
+- `TESTAMUR_HOME` selects the Testamur state root.
+- `TESTAMUR_DB` overrides the database path.
 
-Good smoke tests:
-
-- “Track the sources this coding session actually depends on and show me what would need revalidation if one changes.”
-- “Fetch this documentation through Testamur and preserve the exact revision used.”
-- “Which watched sources changed, and which downstream work may need review?”
-- “Explain why this result is stale without treating stale as false.”
-
-## Troubleshooting
-
-**The host cannot start `testamur-gateway-mcp`.** Confirm the Testamur core package is installed in the same environment/PATH used by the host.
-
-**The MCP server starts but no tools appear.** Use the host's MCP status/list command and inspect the process error before changing Testamur state.
-
-**Codex hooks run but state appears in an unexpected location.** Check `TESTAMUR_HOME` and `TESTAMUR_DB`; the plugin intentionally does not use host-only plugin data as the durable Testamur database.
-
-**A dependency changed. Is everything invalid?** No. Testamur records the change and downstream affectedness/revalidation evidence; `changed != invalid`.
+Host-only plugin data directories are not treated as the durable Testamur database.
 
 ## Development
 
-Current native Codex implementation: `plugins/testamur-codex/`.
+Run the plugin package tests from the repository root:
 
-Submission/publication preparation remains in:
+```bash
+python -m pytest -q
+```
 
-- `plugins/testamur-codex/SUBMISSION.md`
-- `plugins/testamur-codex/submission-tests.json`
+The package-level documentation in [plugins/testamur-codex/README.md](plugins/testamur-codex/README.md) contains implementation details and verification notes.
 
-Host-specific wrappers should stay thin. The Testamur core and MCP gateway remain the semantic authority.
+## Releases
+
+GitHub release tags are the version boundary for this repository. Marketplace installation should remain traceable to an inspectable tag or commit.
