@@ -136,3 +136,13 @@ def test_plugin_bootstraps_preserve_explicit_database_override(monkeypatch, tmp_
         resolved = bootstrap._configure_testamur_state()
         assert resolved == explicit
         assert Path(os.environ["TESTAMUR_DB"]) == explicit
+
+
+def test_doctor_script_is_packaged() -> None:
+    doctor = ROOT / "plugins" / "testamur-codex" / "scripts" / "doctor.py"
+    text = doctor.read_text(encoding="utf-8")
+    assert doctor.is_file()
+    assert "testamur.codex.doctor.v1" in text
+    assert "ready_for_fresh_codex_session" in text
+    assert "testamur-gateway-mcp" in text
+    assert "fetched_does_not_imply_relied" in text

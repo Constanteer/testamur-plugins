@@ -33,6 +33,18 @@ command -v testamur-gateway-mcp
 
 The core runtime is maintained in `Constanteer/testamur`.
 
+## Check the launch environment
+
+The plugin and Testamur core must be visible from the **same environment that launches Codex**. From a checkout of this repository, run:
+
+```bash
+python plugins/testamur-codex/scripts/doctor.py
+```
+
+A successful doctor ends with `Ready: start a fresh Codex session from this environment.` If it reports that core is not importable or `testamur-gateway-mcp` is missing from `PATH`, install/activate Testamur core first and then start a new Codex task.
+
+The doctor checks installation wiring only. It does not verify any source or turn a fetched source into reliance.
+
 ## Install the Codex plugin
 
 Add this repository as a Codex plugin marketplace:
@@ -47,7 +59,7 @@ For reproducible environments, pin the marketplace to a release tag or exact com
 
 ## Verify
 
-Start a fresh Codex session and try a source-provenance workflow such as:
+After the doctor reports ready, start a **fresh Codex session from that same environment** and try a source-provenance workflow such as:
 
 > Fetch this documentation through Testamur and preserve the exact revision used.
 
