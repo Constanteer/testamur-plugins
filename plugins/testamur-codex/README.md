@@ -21,6 +21,14 @@ command -v testamur-gateway-mcp
 
 `testamur-gateway-mcp` is a stdio server, so do not use `--help` as a smoke test; let Codex start it through the bundled MCP declaration.
 
+Before installing the marketplace package, run the packaged doctor from this repository checkout:
+
+```bash
+python plugins/testamur-codex/scripts/doctor.py
+```
+
+The doctor must report that Testamur is importable and both CLI entrypoints are available from the environment that will launch Codex. If it fails, fix the environment and start a fresh Codex task rather than relying on a temporary launcher fallback.
+
 Add the plugin repository marketplace:
 
 ```bash
@@ -56,7 +64,7 @@ Host-specific plugin data directories are not treated as the durable Testamur da
 
 ## Verify
 
-Start a fresh Codex session after installation and try:
+Run the doctor again after installation. Then start a fresh Codex session from the same environment and try:
 
 > Fetch this documentation through Testamur and preserve the exact revision used.
 
@@ -74,6 +82,7 @@ hooks/hooks.json           lifecycle hook registration
 hooks/capture.py           hook bootstrap
 .mcp.json                  bundled local MCP declaration
 mcp/serve.py               MCP bootstrap
+scripts/doctor.py           first-run environment doctor
 testamur-monitor-providers.json  declarative monitor provider manifest
 ```
 
