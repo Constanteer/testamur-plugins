@@ -26,7 +26,7 @@ def _load_bootstrap(path: Path, name: str):
 def test_codex_plugin_manifest_points_to_bundled_hooks_and_legacy_mcp() -> None:
     manifest = _json(PLUGIN / ".codex-plugin" / "plugin.json")
     assert manifest["name"] == "testamur-codex"
-    assert manifest["version"] == "0.4.0"
+    assert manifest["version"] == "1.0.0"
     assert manifest["hooks"] == "./hooks/hooks.json"
     assert manifest["mcpServers"] == "./.mcp.json"
     assert (PLUGIN / "hooks" / "hooks.json").is_file()
