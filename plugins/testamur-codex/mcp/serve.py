@@ -16,6 +16,30 @@ def _repo_root() -> Path | None:
     return None
 
 
+def _plugin_root() -> Path:
+    explicit = os.environ.get("PLUGIN_ROOT")
+    if explicit:
+        return Path(explicit).expanduser()
+    return Path(__file__).resolve().parents[1]
+
+
+def _register_monitor_provider_manifest() -> Path | None:
+    source = _plugin_root() / "testamur-monitor-providers.json"
+    if not source.is_file():
+        return None
+    home = os.environ.get("TESTAMUR_HOME")
+    root = Path(home).expanduser() if home else Path.home() / ".testamur"
+    target = root / "providers" / "testamur-codex.json"
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = source.read_bytes()
+        if not target.exists() or target.read_bytes() != payload:
+            target.write_bytes(payload)
+    except OSError:
+        return None
+    return target
+
+
 def _configure_testamur_state() -> Path:
     """Choose the same stable database as the lifecycle hook bootstrap."""
 
@@ -32,6 +56,7 @@ def _configure_testamur_state() -> Path:
 
 def main() -> int:
     _configure_testamur_state()
+    _register_monitor_provider_manifest()
     try:
         from testamur.source_gateway_mcp import main as mcp_main
     except ImportError:

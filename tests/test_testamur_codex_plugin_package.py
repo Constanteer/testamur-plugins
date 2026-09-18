@@ -26,7 +26,7 @@ def _load_bootstrap(path: Path, name: str):
 def test_codex_plugin_manifest_points_to_bundled_hooks_and_legacy_mcp() -> None:
     manifest = _json(PLUGIN / ".codex-plugin" / "plugin.json")
     assert manifest["name"] == "testamur-codex"
-    assert manifest["version"] == "0.3.0"
+    assert manifest["version"] == "0.4.0"
     assert manifest["hooks"] == "./hooks/hooks.json"
     assert manifest["mcpServers"] == "./.mcp.json"
     assert (PLUGIN / "hooks" / "hooks.json").is_file()
@@ -101,6 +101,28 @@ def test_plugin_bootstraps_resolve_same_testamur_owned_database(monkeypatch, tmp
         resolved = bootstrap._configure_testamur_state()
         assert resolved == expected
         assert Path(os.environ["TESTAMUR_DB"]) == expected
+
+
+def test_plugin_bootstraps_register_monitor_provider_manifest(monkeypatch, tmp_path: Path) -> None:
+    hook = _load_bootstrap(PLUGIN / "hooks" / "capture.py", "testamur_plugin_hook_provider")
+    mcp = _load_bootstrap(PLUGIN / "mcp" / "serve.py", "testamur_plugin_mcp_provider")
+    home = tmp_path / "testamur-home"
+    expected = home / "providers" / "testamur-codex.json"
+    source = _json(PLUGIN / "testamur-monitor-providers.json")
+
+    for bootstrap in (hook, mcp):
+        monkeypatch.setenv("TESTAMUR_HOME", str(home))
+        monkeypatch.setenv("PLUGIN_ROOT", str(PLUGIN))
+        registered = bootstrap._register_monitor_provider_manifest()
+        assert registered == expected
+        assert _json(expected) == source
+
+    assert source["schema"] == "testamur.monitor-providers.v1"
+    providers = {provider["name"]: provider for provider in source["providers"]}
+    assert "github_branch" in providers
+    assert providers["github_branch"]["locator_template"].startswith(
+        "https://github.com/"
+    )
 
 
 def test_plugin_bootstraps_preserve_explicit_database_override(monkeypatch, tmp_path: Path) -> None:

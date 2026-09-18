@@ -35,6 +35,7 @@ Current package shape is valid for development:
 ```text
 hooks -> local Testamur core
 MCP launcher -> local Testamur Source Gateway
+provider manifest -> Testamur Project monitor target registry
 ```
 
 ### Public directory: remote MCP route
@@ -78,6 +79,7 @@ Do not submit until all are true:
 - [ ] dedicated public plugin repository exists;
 - [ ] plugin installs from that repository marketplace;
 - [ ] Testamur core dependency is documented and installable;
+- [ ] `testamur-monitor-providers.json` is included in the published plugin package;
 - [ ] final public website/support/privacy/terms URLs exist;
 - [ ] marketplace authentication policy matches the actual runtime;
 - [ ] public submission shape is chosen (skills-only or remote MCP);

@@ -1,0 +1,29 @@
+{
+  "schema": "testamur.monitor-providers.v1",
+  "providers": [
+    {
+      "name": "github_branch",
+      "label": "GitHub branch",
+      "description": "Monitor the commit feed for one GitHub repository branch. The provider only resolves the target; Testamur core owns the Source, Watch and Project membership.",
+      "locator_template": "https://github.com/{repository}/commits/{branch}.atom",
+      "fields": {
+        "repository": {
+          "type": "string",
+          "required": true,
+          "label": "Repository",
+          "placeholder": "owner/repository",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+          "description": "GitHub repository in owner/name form."
+        },
+        "branch": {
+          "type": "string",
+          "required": true,
+          "label": "Branch",
+          "placeholder": "main",
+          "pattern": "^[A-Za-z0-9._-]+$",
+          "description": "Branch name without slash characters in this provider version."
+        }
+      }
+    }
+  ]
+}

@@ -10,6 +10,11 @@ PLUGIN = Path(__file__).resolve().parents[1]
 def test_submission_assets_are_complete() -> None:
     assert (PLUGIN / "README.md").is_file()
     assert (PLUGIN / "SUBMISSION.md").is_file()
+    provider_manifest = PLUGIN / "testamur-monitor-providers.json"
+    assert provider_manifest.is_file()
+    providers = json.loads(provider_manifest.read_text(encoding="utf-8"))
+    assert providers["schema"] == "testamur.monitor-providers.v1"
+    assert any(item["name"] == "github_branch" for item in providers["providers"])
     payload = json.loads((PLUGIN / "submission-tests.json").read_text(encoding="utf-8"))
     assert payload["schema"] == "testamur.openai-plugin-submission-cases.v1"
     assert len(payload["starter_prompts"]) >= 4
