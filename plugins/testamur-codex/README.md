@@ -1,46 +1,88 @@
-# Testamur Codex plugin
+# Testamur for Codex
 
-This package connects Codex-style agent activity to an installed Testamur core.
+Testamur for Codex captures inspectable agent provenance and gives Codex access to the local Testamur Source Gateway.
 
-It does two things:
+It adds two things:
 
-1. lifecycle hooks capture observable WorkSession/tool events;
-2. a local MCP launcher exposes the Testamur Source Gateway.
+1. lifecycle hooks capture **observable** WorkSession/tool events;
+2. a local MCP server exposes exact source/revision operations.
 
 It intentionally does **not** capture hidden model reasoning and does not turn exposure/fetch into durable reliance.
 
-## Runtime dependency
+## Install
 
-The plugin does not vendor Testamur core.
+The plugin depends on an installed Testamur core package. Confirm both executables are available to Codex:
 
-The environment running the plugin must provide an importable `testamur` package with:
-
-- `testamur.codex_gateway_hook`
-- `testamur.source_gateway_mcp`
-
-The plugin launchers first import the installed package. Their monorepo-relative lookup is a development fallback only and should not be treated as the distribution contract after repository extraction.
-
-## Local / repository marketplace
-
-The transition repository already includes a repository marketplace entry under:
-
-```text
-.agents/plugins/marketplace.json
+```bash
+command -v testamur
+command -v testamur-gateway-mcp
 ```
 
-After extraction to the dedicated plugin repository, keep that catalog in the new repository so developers can add the repo as a Codex marketplace source.
+`testamur-gateway-mcp` is a stdio server, so let Codex start it through the bundled MCP declaration.
 
-The marketplace policy fields still need a deliberate authentication choice before treating the catalog as publication-ready. The current plugin has local hooks/MCP and no hosted OAuth contract; do not invent an authentication flow merely to satisfy metadata.
+Add this repository as a plugin marketplace:
 
-## Public directory status
+```bash
+codex plugin marketplace add Constanteer/testamur-plugins
+```
 
-The current package is suitable for local/repository marketplace testing.
+Then install **testamur-codex** from that marketplace in the Codex plugin manager.
 
-A public OpenAI Plugins Directory submission needs a deliberate submission shape:
+For a reproducible setup, pin the marketplace to a GitHub release tag or exact commit.
 
-- **skills-only**, if Testamur ships a useful workflow without a remote service; or
-- **MCP**, after Testamur exposes a stable public HTTPS MCP endpoint.
+## What it records
 
-The existing `.mcp.json` launches a local Python process. That local process is not itself the remote HTTPS MCP endpoint required for a public MCP submission.
+The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher exposes `testamur.source_gateway_mcp`.
 
-See `SUBMISSION.md` and `submission-tests.json`.
+The package preserves the Testamur semantic firewall:
+
+```text
+recorded != verified
+fetched != relied
+changed != invalid
+stale != false
+lineage != affectedness verdict
+```
+
+## State
+
+By default the plugin resolves state under the Testamur-owned home directory.
+
+- `TESTAMUR_HOME` changes the Testamur state root.
+- `TESTAMUR_DB` explicitly overrides the database path.
+
+Host-specific plugin data directories are not treated as the durable Testamur database.
+
+## Verify
+
+Start a fresh Codex session after installation and try:
+
+> Fetch this documentation through Testamur and preserve the exact revision used.
+
+Then:
+
+> Show what observable provenance Testamur captured for this session.
+
+A fetched source must not automatically become a durable reliance.
+
+## Package layout
+
+```text
+.codex-plugin/plugin.json  native Codex plugin manifest
+hooks/hooks.json           lifecycle hook registration
+hooks/capture.py           hook bootstrap
+.mcp.json                  bundled local MCP declaration
+mcp/serve.py               MCP bootstrap
+```
+
+## Release source
+
+GitHub Releases in this repository are the version/distribution source of record. Marketplace installation should resolve back to an inspectable release/tag.
+
+See the repository root README for Claude Code, OpenCode, generic MCP setup, upgrade guidance and troubleshooting.
+
+## Publication status
+
+The current package is suitable for repository marketplace distribution. Public directory submission remains a separate publication step; do not invent hosted OAuth or remote-MCP metadata for this local plugin.
+
+See `SUBMISSION.md` and `submission-tests.json` for the submission checklist and semantic test cases.
