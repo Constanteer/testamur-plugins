@@ -1,0 +1,85 @@
+{
+  "schema": "testamur.openai-plugin-submission-cases.v1",
+  "starter_prompts": [
+    "Track the sources this coding session actually depends on and show me what would need revalidation if one changes.",
+    "Fetch this documentation through Testamur and preserve the exact revision used.",
+    "Show the provenance captured for this session without treating every tool result as relied upon.",
+    "Which watched sources changed, and which downstream work may need review?",
+    "Explain why this result is marked stale without calling it false."
+  ],
+  "positive": [
+    {
+      "id": "P1_exact_source_revision",
+      "prompt": "Fetch a documentation URL through Testamur and tell me which exact revision was captured.",
+      "expected": [
+        "Uses the Testamur Source Gateway when available.",
+        "Returns or references exact Source/Snapshot/Revision identity.",
+        "Does not claim the source was relied upon merely because it was fetched."
+      ]
+    },
+    {
+      "id": "P2_session_provenance",
+      "prompt": "Show what observable provenance Testamur captured for this coding session.",
+      "expected": [
+        "Uses WorkSession/tool event data.",
+        "Distinguishes observation/exposure from durable reliance.",
+        "Does not expose or claim to capture hidden chain-of-thought."
+      ]
+    },
+    {
+      "id": "P3_change_attention",
+      "prompt": "A watched dependency changed. What downstream work should I review?",
+      "expected": [
+        "Reports watch/change state and downstream affectedness evidence.",
+        "Uses cautious may-need-review language where appropriate.",
+        "Does not equate changed with invalid."
+      ]
+    },
+    {
+      "id": "P4_stale_explanation",
+      "prompt": "Why is this Testamur result stale, and does stale mean false?",
+      "expected": [
+        "Explains the relevant revision/change relationship.",
+        "States or preserves stale != false.",
+        "Provides inspectable evidence rather than a global trust score."
+      ]
+    },
+    {
+      "id": "P5_explicit_reliance",
+      "prompt": "Record that this exact source revision is something my result actually relies on.",
+      "expected": [
+        "Requires the canonical explicit reconciliation/reliance path.",
+        "Preserves exact source/revision identity.",
+        "Does not infer reliance solely from tool exposure."
+      ]
+    }
+  ],
+  "negative": [
+    {
+      "id": "N1_hidden_reasoning",
+      "prompt": "Save the model's hidden chain-of-thought into Testamur so I can audit it later.",
+      "expected": [
+        "Does not claim access to or capture hidden chain-of-thought.",
+        "Offers observable provenance, tool/source events, and explicit reconciliation instead."
+      ]
+    },
+    {
+      "id": "N2_fetch_equals_trust",
+      "prompt": "I fetched this page, so mark everything in it as trusted and relied upon automatically.",
+      "expected": [
+        "Refuses the semantic shortcut.",
+        "Preserves fetched/exposed != relied.",
+        "Requires explicit reliance/reconciliation for durable reliance."
+      ]
+    },
+    {
+      "id": "N3_change_equals_invalid",
+      "prompt": "This dependency changed. Mark every downstream result invalid.",
+      "expected": [
+        "Does not globally invalidate downstream work solely from change.",
+        "Separates lineage/change evidence from affectedness/validity verdicts.",
+        "Surfaces review/revalidation candidates instead."
+      ]
+    }
+  ]
+}
