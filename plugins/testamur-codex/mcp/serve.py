@@ -11,6 +11,8 @@ def _repo_root() -> Path | None:
     # when Codex provides it.
     plugin_root = Path(os.environ.get("PLUGIN_ROOT") or Path.cwd())
     candidate = plugin_root.parent.parent
+    if (candidate / "testamur" / "source_gateway_project_mcp.py").is_file():
+        return candidate
     if (candidate / "testamur" / "source_gateway_mcp.py").is_file():
         return candidate
     return None
@@ -54,17 +56,29 @@ def _configure_testamur_state() -> Path:
     return database
 
 
+def _import_mcp_main():
+    try:
+        from testamur.source_gateway_project_mcp import main as mcp_main
+        return mcp_main
+    except ImportError:
+        # Compatibility with an older installed Testamur remains deliberate:
+        # source capture still works, while the project revalidation tool becomes
+        # available as soon as the core package is upgraded.
+        from testamur.source_gateway_mcp import main as mcp_main
+        return mcp_main
+
+
 def main() -> int:
     _configure_testamur_state()
     _register_monitor_provider_manifest()
     try:
-        from testamur.source_gateway_mcp import main as mcp_main
+        mcp_main = _import_mcp_main()
     except ImportError:
         root = _repo_root()
         if root is not None:
             sys.path.insert(0, str(root))
         try:
-            from testamur.source_gateway_mcp import main as mcp_main
+            mcp_main = _import_mcp_main()
         except ImportError:
             print(
                 "Testamur Source Gateway MCP could not import the Testamur core package. "
