@@ -83,7 +83,22 @@ def test_plugin_bootstraps_do_not_vendor_core() -> None:
         assert "TESTAMUR_HOME" in bootstrap
         assert "subprocess" not in bootstrap
     assert "from testamur.codex_gateway_hook import main" in hook_bootstrap
+    assert "from testamur.source_gateway_project_mcp import main" in mcp_bootstrap
     assert "from testamur.source_gateway_mcp import main" in mcp_bootstrap
+
+
+def test_plugin_readme_exposes_project_supply_chain_semantics() -> None:
+    readme = (PLUGIN / "README.md").read_text(encoding="utf-8")
+    for tool in (
+        "testamur.project_scan",
+        "testamur.project_supply_chain",
+        "testamur.project_supply_chain_diff",
+        "testamur.project_advisory_revalidation",
+    ):
+        assert tool in readme
+    assert "EXPOSED_TO_MODEL != RELIED" in readme
+    assert "changed != invalid" in readme
+    assert "No generic trust score" in readme
 
 
 def test_plugin_bootstraps_resolve_same_testamur_owned_database(monkeypatch, tmp_path: Path) -> None:
