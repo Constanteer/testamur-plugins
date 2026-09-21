@@ -1,14 +1,14 @@
 # Testamur for Codex
 
-Testamur for Codex captures inspectable agent provenance and gives Codex access to the local Testamur Source Gateway.
+Testamur for Codex captures inspectable agent provenance and gives Codex access to the local Testamur Source Gateway and existing-project lifecycle.
 
 It adds three things:
 
 1. lifecycle hooks capture **observable** WorkSession/tool events;
-2. a local MCP server exposes exact source/revision operations;
+2. a local MCP server exposes exact source/revision operations plus canonical Project supply-chain scan/read/diff and advisory-revalidation operations;
 3. a declarative `github_branch` monitor provider lets Testamur Projects add GitHub branch monitors without the plugin owning Watch or Project semantics.
 
-It intentionally does **not** capture hidden model reasoning and does not turn exposure/fetch into durable reliance.
+It intentionally does **not** capture hidden model reasoning and does not turn exposure/fetch into durable reliance. Project supply-chain changes are mechanical observations: `changed != invalid`, and advisory candidate lineage is not an affectedness verdict.
 
 ## Install
 
@@ -39,9 +39,17 @@ Then install **testamur-codex** from that marketplace in the Codex plugin manage
 
 For a reproducible setup, pin the marketplace to a GitHub release tag or exact commit.
 
-## What it records
+## What it records and exposes
 
-The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher exposes `testamur.source_gateway_mcp`. Both launchers also register `testamur-monitor-providers.json` into the Testamur-owned provider registry so the hosted/local Web product can expose the GitHub branch monitor type.
+The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher prefers `testamur.source_gateway_project_mcp` from the installed Testamur core and falls back to the older source-only gateway only for compatibility with older installations. The Project-aware server exposes the canonical source tools together with:
+
+- `testamur.project_scan` — rescan an explicitly repository-bound existing Project and append an immutable supply-chain observation;
+- `testamur.project_supply_chain` — read the current Project supply-chain projection;
+- `testamur.project_supply_chain_diff` — compare immutable Project scan observations mechanically, including dependency additions/removals/version transitions;
+- `testamur.project_advisory_revalidation` — read Project-scoped advisory review/revalidation work without manufacturing an affectedness verdict;
+- the canonical Project-scoped advisory assessment write surface, which records evidence against an exact current candidate rather than accepting an agent-supplied verdict.
+
+The plugin does not reimplement scanning, diffing, affectedness, or Project storage. Those semantics remain owned by the installed Testamur core. Both launchers also register `testamur-monitor-providers.json` into the Testamur-owned provider registry so the hosted/local Web product can expose the GitHub branch monitor type.
 
 The package preserves the Testamur semantic firewall:
 
@@ -50,8 +58,11 @@ recorded != verified
 fetched != relied
 changed != invalid
 stale != false
+EXPOSED_TO_MODEL != RELIED
 lineage != affectedness verdict
 ```
+
+No generic trust score is introduced by the plugin or its MCP launcher.
 
 ## State
 
@@ -72,7 +83,15 @@ Then:
 
 > Show what observable provenance Testamur captured for this session.
 
-A fetched source must not automatically become a durable reliance.
+For an existing Project with an explicit repository binding, also try:
+
+> Rescan this Project's supply chain, then compare the new immutable scan with the previous scan. Report additions, removals and version transitions without treating change as invalidity.
+
+Then:
+
+> Show advisory revalidation work for this Project. Keep candidate overlap separate from affectedness, verification and reliance.
+
+A fetched source must not automatically become a durable reliance, and a dependency delta must not automatically become an invalidity or vulnerability verdict.
 
 ## Package layout
 
@@ -81,8 +100,8 @@ A fetched source must not automatically become a durable reliance.
 hooks/hooks.json           lifecycle hook registration
 hooks/capture.py           hook bootstrap
 .mcp.json                  bundled local MCP declaration
-mcp/serve.py               MCP bootstrap
-scripts/doctor.py           first-run environment doctor
+mcp/serve.py               Project-aware MCP bootstrap with source-only compatibility fallback
+scripts/doctor.py          first-run environment doctor
 testamur-monitor-providers.json  declarative monitor provider manifest
 ```
 
