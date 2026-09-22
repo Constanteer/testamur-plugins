@@ -41,7 +41,7 @@ For a reproducible setup, pin the marketplace to a GitHub release tag or exact c
 
 ## What it records and exposes
 
-The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher prefers `testamur.source_gateway_project_mcp` from the installed Testamur core and falls back to the older source-only gateway only for compatibility with older installations. The Project-aware server exposes the canonical source tools together with:
+The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher prefers the installed core's public `testamur.repository_binding_mcp` surface (the same implementation behind `testamur-gateway-mcp`), then falls back to `testamur.source_gateway_project_mcp` and finally the older source-only gateway for compatibility with older installations. The canonical repository-binding server installs the Project-aware tools and exposes the source tools together with:
 
 - `testamur.project_repository_binding` — inspect the durable repository binding and its scanner-eligibility lifecycle state;
 - `testamur.set_project_repository_binding_enabled` — enable or disable scanning without rewriting immutable binding revisions;
@@ -107,7 +107,7 @@ A fetched source must not automatically become a durable reliance, and a depende
 hooks/hooks.json           lifecycle hook registration
 hooks/capture.py           hook bootstrap
 .mcp.json                  bundled local MCP declaration
-mcp/serve.py               Project-aware MCP bootstrap with source-only compatibility fallback
+mcp/serve.py               Canonical repository-binding/Project MCP bootstrap with compatibility fallback
 scripts/doctor.py          first-run environment doctor
 testamur-monitor-providers.json  declarative monitor provider manifest
 ```
