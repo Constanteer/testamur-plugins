@@ -103,6 +103,7 @@ def test_plugin_readme_exposes_project_supply_chain_semantics() -> None:
     assert "EXPOSED_TO_MODEL != RELIED" in readme
     assert "changed != invalid" in readme
     assert "No generic trust score" in readme
+    assert "testamur.repository_binding_mcp" in readme
 
 
 def test_plugin_bootstraps_resolve_same_testamur_owned_database(monkeypatch, tmp_path: Path) -> None:
