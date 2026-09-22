@@ -25,6 +25,11 @@ def inspect_environment() -> dict[str, object]:
         if testamur_spec is not None
         else None
     )
+    binding_gateway_spec = (
+        importlib.util.find_spec("testamur.repository_binding_mcp")
+        if testamur_spec is not None
+        else None
+    )
     mathhub_mcp_spec = importlib.util.find_spec("mathhub_mcp")
     command = shutil.which("testamur")
     gateway = shutil.which("testamur-gateway-mcp")
@@ -45,6 +50,7 @@ def inspect_environment() -> dict[str, object]:
         "testamur_command": command is not None,
         "testamur_gateway_mcp_command": gateway is not None,
         "testamur_project_gateway_surface": project_gateway_spec is not None,
+        "testamur_repository_binding_mcp_surface": binding_gateway_spec is not None,
         "mathhub_mcp_surface": mathhub_mcp_spec is not None or mathhub_mcp_command is not None,
         "plugin_files": all(files.values()),
     }
@@ -75,6 +81,12 @@ def inspect_environment() -> dict[str, object]:
             "message": "Installed Testamur lacks the project-aware Source Gateway MCP surface.",
             "fix": "Upgrade Testamur core so source_gateway_project_mcp is available; the legacy gateway does not expose the existing-project supply-chain lifecycle.",
         })
+    if testamur_spec is not None and binding_gateway_spec is None:
+        problems.append({
+            "code": "repository_binding_mcp_surface_missing",
+            "message": "Installed Testamur lacks the canonical repository-binding MCP surface.",
+            "fix": "Upgrade Testamur core so repository_binding_mcp is available; the project-only gateway does not expose repository binding lifecycle controls.",
+        })
     if mathhub_mcp_spec is None and mathhub_mcp_command is None:
         problems.append({
             "code": "mathhub_mcp_surface_missing",
@@ -91,7 +103,7 @@ def inspect_environment() -> dict[str, object]:
 
     return {
         "ok": ready,
-        "schema": "testamur.codex.doctor.v2",
+        "schema": "testamur.codex.doctor.v3",
         "ready_for_fresh_codex_session": ready,
         "checks": checks,
         "resolved": {
@@ -125,6 +137,7 @@ def _render_human(report: dict[str, object]) -> str:
         f"[{'ok' if checks['testamur_command'] else '!!'}] testamur command",
         f"[{'ok' if checks['testamur_gateway_mcp_command'] else '!!'}] testamur-gateway-mcp command",
         f"[{'ok' if checks['testamur_project_gateway_surface'] else '!!'}] project-aware supply-chain MCP surface",
+        f"[{'ok' if checks['testamur_repository_binding_mcp_surface'] else '!!'}] repository-binding lifecycle MCP surface",
         f"[{'ok' if checks['mathhub_mcp_surface'] else '!!'}] MathHub MCP surface",
         f"[{'ok' if checks['plugin_files'] else '!!'}] plugin package files",
         "",
@@ -136,7 +149,7 @@ def _render_human(report: dict[str, object]) -> str:
         lines += [
             "",
             "Ready: start a fresh Codex session from this environment.",
-            "Project-aware Testamur supply-chain operations and the host-neutral MathHub MCP surface are available.",
+            "Project-aware Testamur supply-chain and repository-binding lifecycle operations, plus the host-neutral MathHub MCP surface, are available.",
         ]
     else:
         lines += ["", "Not ready for a fresh Codex session:"]
@@ -151,7 +164,7 @@ def _render_human(report: dict[str, object]) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Check whether Testamur core, project-aware MCP, MathHub MCP, and the Codex plugin are ready for a fresh Codex session.")
+    parser = argparse.ArgumentParser(description="Check whether Testamur core, project/repository-binding MCP, MathHub MCP, and the Codex plugin are ready for a fresh Codex session.")
     parser.add_argument("--json", action="store_true", help="emit the machine-readable doctor report")
     args = parser.parse_args(argv)
     report = inspect_environment()
