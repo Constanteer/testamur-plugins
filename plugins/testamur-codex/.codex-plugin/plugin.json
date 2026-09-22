@@ -1,7 +1,7 @@
 {
   "name": "testamur-codex",
-  "version": "1.0.0",
-  "description": "Capture inspectable Codex provenance, route exact source access through Testamur, and register GitHub branch monitor targets.",
+  "version": "1.1.0",
+  "description": "Capture inspectable Codex provenance and expose canonical Testamur Project, repository-binding, source-revision, and revalidation workflows.",
   "author": {
     "name": "Constanteer"
   },
@@ -10,7 +10,7 @@
   "interface": {
     "displayName": "Testamur",
     "shortDescription": "Preserve what Codex work depended on.",
-    "longDescription": "Capture local WorkSessions and tool activity, expose a Testamur MCP Source Gateway for exact revisions, and register a declarative GitHub branch monitor provider without recording hidden model reasoning.",
+    "longDescription": "Capture observable WorkSessions and tool activity, expose canonical Testamur MCP surfaces for exact sources, Project supply-chain review, repository-binding lifecycle, and revalidation, without recording hidden model reasoning.",
     "developerName": "Constanteer",
     "category": "Productivity"
   }
