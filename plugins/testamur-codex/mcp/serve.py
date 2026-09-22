@@ -11,6 +11,8 @@ def _repo_root() -> Path | None:
     # when Codex provides it.
     plugin_root = Path(os.environ.get("PLUGIN_ROOT") or Path.cwd())
     candidate = plugin_root.parent.parent
+    if (candidate / "testamur" / "repository_binding_mcp.py").is_file():
+        return candidate
     if (candidate / "testamur" / "source_gateway_project_mcp.py").is_file():
         return candidate
     if (candidate / "testamur" / "source_gateway_mcp.py").is_file():
@@ -58,14 +60,21 @@ def _configure_testamur_state() -> Path:
 
 def _import_mcp_main():
     try:
-        from testamur.source_gateway_project_mcp import main as mcp_main
+        # Match the installed core's public testamur-gateway-mcp entrypoint.
+        # This layer installs repository-binding lifecycle tools as well as the
+        # complete Project supply-chain/advisory extension.
+        from testamur.repository_binding_mcp import main as mcp_main
         return mcp_main
     except ImportError:
-        # Compatibility with an older installed Testamur remains deliberate:
-        # source capture still works, while the project revalidation tool becomes
-        # available as soon as the core package is upgraded.
-        from testamur.source_gateway_mcp import main as mcp_main
-        return mcp_main
+        try:
+            from testamur.source_gateway_project_mcp import main as mcp_main
+            return mcp_main
+        except ImportError:
+            # Compatibility with older installed Testamur remains deliberate:
+            # source capture still works, while Project/binding lifecycle tools
+            # become available as soon as the core package is upgraded.
+            from testamur.source_gateway_mcp import main as mcp_main
+            return mcp_main
 
 
 def main() -> int:
