@@ -143,7 +143,9 @@ The package-level documentation in [plugins/testamur-codex/README.md](plugins/te
 
 ## Releases
 
-The first public release line is **v1.0.0**. GitHub release tags are the version boundary for this repository. Marketplace installation should remain traceable to an inspectable tag or commit.
+The initial annotated tag is **v1.0.0**. Current `main` prepares **v1.1.0**, which adds the Project supply-chain/advisory MCP surface, host-neutral MathHub MCP, repository-binding lifecycle tools, and stricter first-run doctor checks.
+
+GitHub Releases are the reproducible distribution boundary for this repository. Do not move or reuse `v1.0.0`; publish a new `v1.1.0` tag/Release for the current package, and keep marketplace installs traceable to that inspectable release or exact commit.
 
 ## License
 

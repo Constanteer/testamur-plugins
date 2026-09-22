@@ -26,7 +26,7 @@ def _load_bootstrap(path: Path, name: str):
 def test_codex_plugin_manifest_points_to_bundled_hooks_and_legacy_mcp() -> None:
     manifest = _json(PLUGIN / ".codex-plugin" / "plugin.json")
     assert manifest["name"] == "testamur-codex"
-    assert manifest["version"] == "1.0.0"
+    assert manifest["version"] == "1.1.0"
     assert manifest["hooks"] == "./hooks/hooks.json"
     assert manifest["mcpServers"] == "./.mcp.json"
     assert (PLUGIN / "hooks" / "hooks.json").is_file()
@@ -103,6 +103,7 @@ def test_plugin_readme_exposes_project_supply_chain_semantics() -> None:
     assert "EXPOSED_TO_MODEL != RELIED" in readme
     assert "changed != invalid" in readme
     assert "No generic trust score" in readme
+    assert "testamur.repository_binding_mcp" in readme
 
 
 def test_plugin_bootstraps_resolve_same_testamur_owned_database(monkeypatch, tmp_path: Path) -> None:
