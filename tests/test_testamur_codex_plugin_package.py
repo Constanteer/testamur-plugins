@@ -83,6 +83,7 @@ def test_plugin_bootstraps_do_not_vendor_core() -> None:
         assert "TESTAMUR_HOME" in bootstrap
         assert "subprocess" not in bootstrap
     assert "from testamur.codex_gateway_hook import main" in hook_bootstrap
+    assert "from testamur.repository_binding_mcp import main" in mcp_bootstrap
     assert "from testamur.source_gateway_project_mcp import main" in mcp_bootstrap
     assert "from testamur.source_gateway_mcp import main" in mcp_bootstrap
 
@@ -90,6 +91,9 @@ def test_plugin_bootstraps_do_not_vendor_core() -> None:
 def test_plugin_readme_exposes_project_supply_chain_semantics() -> None:
     readme = (PLUGIN / "README.md").read_text(encoding="utf-8")
     for tool in (
+        "testamur.project_repository_binding",
+        "testamur.set_project_repository_binding_enabled",
+        "testamur.project_repository_unbind",
         "testamur.project_scan",
         "testamur.project_supply_chain",
         "testamur.project_supply_chain_diff",
@@ -157,7 +161,9 @@ def test_doctor_script_is_packaged() -> None:
     doctor = ROOT / "plugins" / "testamur-codex" / "scripts" / "doctor.py"
     text = doctor.read_text(encoding="utf-8")
     assert doctor.is_file()
-    assert "testamur.codex.doctor.v1" in text
+    assert "testamur.codex.doctor.v3" in text
     assert "ready_for_fresh_codex_session" in text
     assert "testamur-gateway-mcp" in text
+    assert "testamur.repository_binding_mcp" in text
+    assert "testamur_repository_binding_mcp_surface" in text
     assert "fetched_does_not_imply_relied" in text

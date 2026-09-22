@@ -43,6 +43,9 @@ For a reproducible setup, pin the marketplace to a GitHub release tag or exact c
 
 The hook adapter records observable lifecycle/tool events into Testamur-owned state. The bundled MCP launcher prefers `testamur.source_gateway_project_mcp` from the installed Testamur core and falls back to the older source-only gateway only for compatibility with older installations. The Project-aware server exposes the canonical source tools together with:
 
+- `testamur.project_repository_binding` — inspect the durable repository binding and its scanner-eligibility lifecycle state;
+- `testamur.set_project_repository_binding_enabled` — enable or disable scanning without rewriting immutable binding revisions;
+- `testamur.project_repository_unbind` — non-destructively disable scanning while preserving binding identity and history;
 - `testamur.project_scan` — rescan an explicitly repository-bound existing Project and append an immutable supply-chain observation;
 - `testamur.project_supply_chain` — read the current Project supply-chain projection;
 - `testamur.project_supply_chain_diff` — compare immutable Project scan observations mechanically, including dependency additions/removals/version transitions;
@@ -84,6 +87,10 @@ Then:
 > Show what observable provenance Testamur captured for this session.
 
 For an existing Project with an explicit repository binding, also try:
+
+> Inspect this Project's repository binding state. If scanning is disabled, explain that this is scanner eligibility only; preserve the binding identity/history and do not treat disabled as invalid, affected, verified, or relied upon.
+
+Then:
 
 > Rescan this Project's supply chain, then compare the new immutable scan with the previous scan. Report additions, removals and version transitions without treating change as invalidity.
 
