@@ -67,9 +67,9 @@ The plugin and Testamur core must be visible from the **same environment that la
 python plugins/testamur-codex/scripts/doctor.py
 ```
 
-A successful doctor ends with `Ready: start a fresh Codex session from this environment.` If it reports that core is not importable or `testamur-gateway-mcp` is missing from `PATH`, install/activate Testamur core first and then start a new Codex task.
+A successful doctor ends with `Ready: start a fresh Codex session from this environment.` It checks the installed Testamur core, the project/repository-binding MCP surface, the bundled plugin files, and the separate MathHub MCP surface declared by the plugin. If Testamur core is missing, install/activate it in the Codex environment. If MathHub is not importable and `mathhub-mcp` is not on `PATH`, install the MathHub client surface or set `MATHHUB_ROOT` to a MathHub checkout before starting a fresh Codex task.
 
-The doctor checks installation wiring only. It does not verify any source or turn a fetched source into reliance.
+The doctor checks installation wiring only. Availability does not verify a source or mathematical claim, and it does not turn fetched/exposed material into reliance.
 
 ## Install the Codex plugin
 

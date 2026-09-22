@@ -27,7 +27,7 @@ Before installing the marketplace package, run the packaged doctor from this rep
 python plugins/testamur-codex/scripts/doctor.py
 ```
 
-The doctor must report that Testamur is importable and both CLI entrypoints are available from the environment that will launch Codex. If it fails, fix the environment and start a fresh Codex task rather than relying on a temporary launcher fallback.
+The doctor must report that Testamur is importable, the public Project/repository-binding MCP surface is present, both Testamur CLI entrypoints are available, and the bundled MathHub MCP surface can be resolved (either `mathhub_mcp` is importable or `mathhub-mcp` is on `PATH`). For development checkouts, `MATHHUB_ROOT` can point the launcher at MathHub. If the doctor fails, fix that same launch environment and start a fresh Codex task rather than relying on a temporary launcher fallback.
 
 Add the plugin repository marketplace:
 
