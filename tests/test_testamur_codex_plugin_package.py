@@ -167,4 +167,6 @@ def test_doctor_script_is_packaged() -> None:
     assert "testamur-gateway-mcp" in text
     assert "testamur.repository_binding_mcp" in text
     assert "testamur_repository_binding_mcp_surface" in text
+    assert "mathhub_mcp_surface" in text
+    assert "MATHHUB_ROOT" in text
     assert "fetched_does_not_imply_relied" in text
