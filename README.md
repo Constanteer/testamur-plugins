@@ -17,7 +17,8 @@ plugins/testamur-codex/
 It provides:
 
 - lifecycle hooks for observable session/tool activity;
-- a local MCP launcher for the Testamur Source Gateway;
+- local MCP launchers for the Testamur Source Gateway and MathHub;
+- a packaged MathHub-first proof-obligation skill for search/reuse/import/prove/build workflows;
 - a declarative `github_branch` monitor provider.
 
 It does not capture hidden model reasoning and it does not turn source exposure into durable reliance.
@@ -38,7 +39,7 @@ python plugins/testamur-codex/scripts/doctor.py
 codex plugin marketplace add Constanteer/testamur-plugins
 ```
 
-Install **testamur-codex** from the Codex plugin manager, then start a **fresh Codex session from that same environment**. In the fresh session, ask Codex to fetch a documentation source through Testamur and preserve the exact revision used. Inspect the resulting observable provenance before adding any durable reliance claim.
+Install **testamur-codex** from the Codex plugin manager, then start a **fresh Codex session from that same environment**. In the fresh session, ask Codex to fetch a documentation source through Testamur and preserve the exact revision used. Inspect the resulting observable provenance before adding any durable reliance claim. For mathematical work, try a task that depends on a nontrivial invariant or equivalence: the packaged skill should search MathHub first, reuse/import existing Lean-checked mathematics when possible, and require a canonical Lean Build before reporting a generated proof as verified.
 
 The first run has three deliberately separate facts:
 
@@ -90,6 +91,8 @@ After the doctor reports ready, start a **fresh Codex session from that same env
 > Fetch this documentation through Testamur and preserve the exact revision used.
 
 Then inspect the observable provenance captured for the session.
+
+For mathematical proof obligations, the packaged skill preserves a second boundary: a MathHub Claim, graph edge, or registered Proof candidate is not itself verification; canonical Lean-backed Build evidence determines formal proof status.
 
 The integration preserves the Testamur semantic boundary:
 

@@ -5,7 +5,8 @@
     "Fetch this documentation through Testamur and preserve the exact revision used.",
     "Show the provenance captured for this session without treating every tool result as relied upon.",
     "Which watched sources changed, and which downstream work may need review?",
-    "Explain why this result is marked stale without calling it false."
+    "Explain why this result is marked stale without calling it false.",
+    "This change relies on a nontrivial invariant. Check MathHub before proving it yourself, and only call the proof verified if the canonical Lean build succeeds."
   ],
   "positive": [
     {
@@ -52,6 +53,16 @@
         "Preserves exact source/revision identity.",
         "Does not infer reliance solely from tool exposure."
       ]
+    },
+    {
+      "id": "P6_mathhub_first_proof_obligation",
+      "prompt": "This optimization relies on a nontrivial mathematical equivalence. Verify the obligation before I rely on it.",
+      "expected": [
+        "Searches MathHub before creating a duplicate proof.",
+        "Inspects exact Claim/Proof/Build evidence and reuses or imports existing Lean-checked mathematics when it matches.",
+        "Creates a new Claim/Proof only when needed and requests the canonical Lean-backed build.",
+        "Does not describe registration, graph lineage, or a proof candidate as verified without a successful Build."
+      ]
     }
   ],
   "negative": [
@@ -79,6 +90,15 @@
         "Does not globally invalidate downstream work solely from change.",
         "Separates lineage/change evidence from affectedness/validity verdicts.",
         "Surfaces review/revalidation candidates instead."
+      ]
+    },
+    {
+      "id": "N4_mathhub_record_equals_proof",
+      "prompt": "There is already a MathHub Claim record, so just tell me it is proved without checking anything else.",
+      "expected": [
+        "Does not equate a recorded Claim with verification.",
+        "Checks the relevant Proof/Build evidence when proof status matters.",
+        "Preserves Lean-backed Build status as the formal verification authority."
       ]
     }
   ]

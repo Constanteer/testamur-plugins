@@ -1,12 +1,13 @@
 # Testamur for Codex
 
-Testamur for Codex captures inspectable agent provenance and gives Codex access to the local Testamur Source Gateway and existing-project lifecycle.
+Testamur for Codex captures inspectable agent provenance, gives Codex access to the local Testamur Source Gateway and existing-project lifecycle, and exposes MathHub for Lean-backed mathematical verification.
 
-It adds three things:
+It adds four things:
 
 1. lifecycle hooks capture **observable** WorkSession/tool events;
-2. a local MCP server exposes exact source/revision operations plus canonical Project supply-chain scan/read/diff and advisory-revalidation operations;
-3. a declarative `github_branch` monitor provider lets Testamur Projects add GitHub branch monitors without the plugin owning Watch or Project semantics.
+2. local MCP servers expose exact Testamur source/Project operations and MathHub Claim/Proof/Build operations;
+3. a `mathhub-proof-workflow` skill teaches Codex to search before proving, reuse/import existing mathematics when possible, and require canonical Lean build evidence before calling a generated proof verified;
+4. a declarative `github_branch` monitor provider lets Testamur Projects add GitHub branch monitors without the plugin owning Watch or Project semantics.
 
 It intentionally does **not** capture hidden model reasoning and does not turn exposure/fetch into durable reliance. Project supply-chain changes are mechanical observations: `changed != invalid`, and advisory candidate lineage is not an affectedness verdict.
 
@@ -54,6 +55,25 @@ The hook adapter records observable lifecycle/tool events into Testamur-owned st
 
 The plugin does not reimplement scanning, diffing, affectedness, or Project storage. Those semantics remain owned by the installed Testamur core. Both launchers also register `testamur-monitor-providers.json` into the Testamur-owned provider registry so the hosted/local Web product can expose the GitHub branch monitor type.
 
+## MathHub-first proof obligations
+
+The packaged `mathhub-proof-workflow` skill activates when Codex needs to establish or materially rely on a nontrivial theorem, invariant, equivalence, derivation, bound, or other proof obligation. It does not activate for routine arithmetic, syntax-only edits, normal typechecking, or behavior better established by ordinary tests.
+
+Its preferred sequence is:
+
+```text
+formulate obligation
+→ mathhub_search_claims
+→ inspect plausible Claim / Proof / Build evidence
+→ reuse an existing Lean-built Claim when it exactly matches
+   or import an existing Lean theorem
+   or register a new Claim + Proof candidate
+→ mathhub_build_proof
+→ report the actual canonical Build result
+```
+
+Search hits, registered Claims, argument graphs, and Proof candidates are not verification verdicts. Lean-backed MathHub Build evidence remains authoritative for formal proof status. Querying MathHub also does not create durable Testamur reliance; reliance remains an explicit reconciliation decision.
+
 The package preserves the Testamur semantic firewall:
 
 ```text
@@ -98,7 +118,11 @@ Then:
 
 > Show advisory revalidation work for this Project. Keep candidate overlap separate from affectedness, verification and reliance.
 
-A fetched source must not automatically become a durable reliance, and a dependency delta must not automatically become an invalidity or vulnerability verdict.
+For the proof workflow, try:
+
+> This refactor relies on a nontrivial invariant. Check MathHub before proving it yourself; reuse or import existing Lean-checked mathematics if it matches, otherwise create a proof candidate and build it.
+
+A fetched source must not automatically become a durable reliance, a dependency delta must not automatically become an invalidity or vulnerability verdict, and a recorded MathHub Claim or Proof candidate must not be described as verified without a successful canonical Lean-backed Build.
 
 ## Package layout
 
@@ -108,6 +132,8 @@ hooks/hooks.json           lifecycle hook registration
 hooks/capture.py           hook bootstrap
 .mcp.json                  bundled local MCP declaration
 mcp/serve.py               Canonical repository-binding/Project MCP bootstrap with compatibility fallback
+mcp/mathhub.py             host-neutral MathHub MCP launcher
+skills/mathhub-proof-workflow/SKILL.md  MathHub-first proof-obligation workflow
 scripts/doctor.py          first-run environment doctor
 testamur-monitor-providers.json  declarative monitor provider manifest
 ```

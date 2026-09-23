@@ -1,12 +1,13 @@
 {
   "name": "testamur-codex",
   "version": "1.1.0",
-  "description": "Capture inspectable Codex provenance and expose canonical Testamur Project, repository-binding, source-revision, and revalidation workflows.",
+  "description": "Capture inspectable Codex provenance, expose canonical Testamur workflows, and guide MathHub-first Lean-backed proof obligations.",
   "author": {
     "name": "Constanteer"
   },
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Testamur",
     "shortDescription": "Preserve what Codex work depended on.",

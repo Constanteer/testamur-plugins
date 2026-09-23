@@ -23,17 +23,41 @@ def _load_bootstrap(path: Path, name: str):
     return module
 
 
-def test_codex_plugin_manifest_points_to_bundled_hooks_and_legacy_mcp() -> None:
+def test_codex_plugin_manifest_points_to_bundled_hooks_mcp_and_skills() -> None:
     manifest = _json(PLUGIN / ".codex-plugin" / "plugin.json")
     assert manifest["name"] == "testamur-codex"
     assert manifest["version"] == "1.1.0"
     assert manifest["hooks"] == "./hooks/hooks.json"
     assert manifest["mcpServers"] == "./.mcp.json"
+    assert manifest["skills"] == "./skills/"
     assert (PLUGIN / "hooks" / "hooks.json").is_file()
     assert (PLUGIN / "hooks" / "capture.py").is_file()
     assert (PLUGIN / ".mcp.json").is_file()
     assert not (PLUGIN / "mcp.json").exists()
     assert (PLUGIN / "mcp" / "serve.py").is_file()
+    assert (PLUGIN / "mcp" / "mathhub.py").is_file()
+
+
+def test_codex_plugin_packages_mathhub_first_proof_workflow() -> None:
+    skill = (
+        PLUGIN / "skills" / "mathhub-proof-workflow" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    assert "name: mathhub-proof-workflow" in skill
+    assert "Search MathHub before constructing a new proof." in skill
+    for tool in (
+        "mathhub_search_claims",
+        "mathhub_read_claim",
+        "mathhub_import_declaration",
+        "mathhub_register_claim",
+        "mathhub_register_proof",
+        "mathhub_build_proof",
+    ):
+        assert tool in skill
+    assert "routine arithmetic" in skill
+    assert "registered Proof is a candidate" in skill
+    assert "recorded != verified" in skill
+    assert "EXPOSED_TO_MODEL != RELIED" in skill
+    assert "generic trust score" in skill
 
 
 def test_codex_hooks_cover_session_and_tool_lifecycle_synchronously() -> None:
@@ -51,18 +75,25 @@ def test_codex_hooks_cover_session_and_tool_lifecycle_synchronously() -> None:
                 assert handler.get("async") is not True
 
 
-def test_legacy_mcp_config_uses_plugin_root_cwd_and_callable_server_key() -> None:
+def test_legacy_mcp_config_uses_plugin_root_cwd_and_callable_server_keys() -> None:
     config = _json(PLUGIN / ".mcp.json")
     assert "$schema" not in config
     names = list(config["mcpServers"])
-    assert names == ["testamur_source_gateway"]
+    assert names == ["testamur_source_gateway", "mathhub"]
     # Codex has had callable-tool exposure bugs with hyphenated plugin MCP keys.
-    assert re.fullmatch(r"[A-Za-z0-9_]+", names[0])
-    server = config["mcpServers"][names[0]]
-    assert server["command"] == "python3"
-    assert server["args"] == ["mcp/serve.py"]
-    assert server["cwd"] == "."
-    assert "env" not in server
+    assert all(re.fullmatch(r"[A-Za-z0-9_]+", name) for name in names)
+
+    gateway = config["mcpServers"]["testamur_source_gateway"]
+    assert gateway["command"] == "python3"
+    assert gateway["args"] == ["mcp/serve.py"]
+    assert gateway["cwd"] == "."
+    assert "env" not in gateway
+
+    mathhub = config["mcpServers"]["mathhub"]
+    assert mathhub["command"] == "python3"
+    assert mathhub["args"] == ["mcp/mathhub.py"]
+    assert mathhub["cwd"] == "."
+    assert "env" not in mathhub
 
 
 def test_repo_marketplace_discovers_testamur_codex_plugin() -> None:
