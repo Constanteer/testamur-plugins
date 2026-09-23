@@ -20,6 +20,18 @@ def _candidate_roots() -> list[Path]:
     return roots
 
 
+def _mcp_argv() -> list[str]:
+    """Translate host-neutral MathHub environment configuration to MCP flags."""
+    argv: list[str] = []
+    base_url = os.environ.get("MATHHUB_URL")
+    timeout = os.environ.get("MATHHUB_TIMEOUT")
+    if base_url:
+        argv.extend(["--base-url", base_url])
+    if timeout:
+        argv.extend(["--timeout", timeout])
+    return argv
+
+
 def main() -> int:
     try:
         from mathhub_mcp import main as mcp_main
@@ -37,7 +49,7 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-    return int(mcp_main())
+    return int(mcp_main(_mcp_argv()))
 
 
 if __name__ == "__main__":
