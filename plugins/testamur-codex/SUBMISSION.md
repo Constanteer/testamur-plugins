@@ -9,7 +9,7 @@ The current Testamur Codex plugin can be tested through a repository/local marke
 - **Name:** Testamur
 - **Category:** Productivity
 - **Short description:** Preserve what Codex work depended on.
-- **Long description:** Capture observable agent/tool provenance as Testamur WorkSessions and route exact source access through the Testamur Source Gateway, while keeping exposure distinct from durable reliance and excluding hidden model reasoning.
+- **Long description:** Capture observable agent/tool provenance as Testamur WorkSessions, route exact source access through the Testamur Source Gateway, and guide nontrivial mathematical proof obligations through MathHub with Lean-backed Build evidence, while keeping observation distinct from reliance and registration distinct from verification.
 - **Developer:** Constanteer
 - **Website:** fill with the final public Testamur site URL after `testamur-site` is deployed
 - **Support URL:** fill with the dedicated public support route/address
@@ -25,6 +25,7 @@ Do not submit placeholder URLs.
 3. “Show the provenance captured for this session without treating every tool result as relied upon.”
 4. “Which watched sources changed, and which downstream work may need review?”
 5. “Explain why this result is marked stale without calling it false.”
+6. “This change relies on a nontrivial invariant. Check MathHub before proving it yourself, and only call the proof verified if the canonical Lean build succeeds.”
 
 ## Submission shape decision
 
@@ -34,7 +35,8 @@ Current package shape is valid for development:
 
 ```text
 hooks -> local Testamur core
-MCP launcher -> local Testamur Source Gateway
+MCP launchers -> local Testamur Source Gateway + MathHub
+skill -> MathHub-first proof-obligation workflow
 provider manifest -> Testamur Project monitor target registry
 ```
 
@@ -53,7 +55,7 @@ The local `python3 mcp/serve.py` launcher is not the public endpoint.
 
 ### Public directory: skills-only route
 
-A skills-only submission is possible only after the plugin contains a useful self-contained Testamur skill. Do not label the current hook/MCP package “skills-only”; no public submission should misrepresent the package shape.
+The package now contains a useful workflow skill, but the MathHub proof workflow is not self-contained: live Claim/Proof search, import, registration and Lean Build operations depend on the MathHub MCP surface. Do not label the current hook/MCP package “skills-only” unless the submission intentionally removes or degrades those live operations and documents that reduced capability.
 
 ## Publisher/account prerequisites
 
