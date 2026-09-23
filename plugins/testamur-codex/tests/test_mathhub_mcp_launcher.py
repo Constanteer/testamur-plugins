@@ -42,3 +42,11 @@ def test_mathhub_launcher_forwards_host_neutral_endpoint_environment(monkeypatch
     monkeypatch.delenv("MATHHUB_URL")
     monkeypatch.delenv("MATHHUB_TIMEOUT")
     assert module._mcp_argv() == []
+
+
+def test_mathhub_skill_tracks_plural_bounded_closure_contract() -> None:
+    skill = (PLUGIN_ROOT / "skills" / "mathhub-proof-workflow" / "SKILL.md").read_text(encoding="utf-8")
+    assert "declaration_names" in skill
+    assert "max_depth" in skill
+    assert "max_claims" in skill
+    assert "Importing a closure records/imports declarations; it does not itself verify them." in skill
