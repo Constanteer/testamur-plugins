@@ -46,8 +46,8 @@ Do not invoke this workflow merely for:
 
 5. **Import an existing Lean theorem when appropriate.**
    If the required theorem already exists in the available Lean environment but is not yet represented as a MathHub Claim, use `mathhub_import_declaration`.
-   Use `mathhub_import_closure` only when the dependency closure is useful for the task.
-   Importing must preserve the external declaration identity and MathHub's normal Lean-backed verification semantics.
+   Use `mathhub_import_closure` only when the dependency closure is useful for the task. Its current host-neutral MCP contract takes plural `declaration_names` so one request can name one or more roots; use `max_depth` and `max_claims` to keep closure expansion explicitly bounded.
+   Importing a closure records/imports declarations; it does not itself verify them. Preserve the external declaration identity and use MathHub's canonical Lean-backed Build result for verification status.
 
 6. **Create a new Claim only when needed.**
    If no suitable existing or importable theorem matches and formal verification is appropriate:
