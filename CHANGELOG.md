@@ -1,8 +1,8 @@
 # Changelog
 
-## v1.1.0 — release candidate
+## v1.1.0
 
-This release candidate advances the Codex integration without changing Testamur's semantic firewall.
+This release advances the Codex integration without changing Testamur's semantic firewall.
 
 ### Added
 
@@ -25,4 +25,4 @@ This release candidate advances the Codex integration without changing Testamur'
 
 ### Release operator note
 
-The existing annotated `v1.0.0` tag points at the initial package commit and must not be moved. Publish `v1.1.0` from the release-candidate commit only after package checks have actually executed (or their infrastructure-not-executed state has been explicitly recorded) and create the corresponding GitHub Release object. A tag without a GitHub Release does not satisfy the public distribution contract documented by Testamur.
+The existing annotated `v1.0.0` tag points at the initial package commit and must not be moved. Publish `v1.1.0` from this release commit after package checks have actually executed, or after their infrastructure-not-executed state has been explicitly recorded. Create the corresponding published GitHub Release object; a tag without a GitHub Release does not satisfy Testamur's public distribution contract.
