@@ -1,6 +1,6 @@
 ---
 name: mathhub-proof-workflow
-description: Use MathHub when a Codex task needs to establish, check, or materially rely on a nontrivial mathematical claim, theorem, invariant, equivalence, derivation, or proof obligation. Search before proving; reuse or import existing Lean-checked mathematics when possible; create and build a new proof only when needed. Do not trigger for routine arithmetic, syntax-only edits, ordinary typechecking, or facts better established by normal tests.
+description: Use MathHub when a Codex task needs to establish, check, or materially rely on a nontrivial mathematical claim, theorem, invariant, equivalence, derivation, or proof obligation. Search the read-only Mathlib library and dependency graph before constructing new mathematics; add user-provided Lean only when new source is needed; create and build a new proof only when needed. Do not trigger for routine arithmetic, syntax-only edits, ordinary typechecking, or facts better established by normal tests.
 ---
 
 # MathHub-first proof workflow
@@ -29,27 +29,39 @@ Do not invoke this workflow merely for:
 1. **Formulate the obligation.**
    State the mathematical claim precisely enough to search for it. Preserve the user's intended scope and assumptions. Do not weaken a claim just to find a match.
 
-2. **Search MathHub before constructing a new proof.**
-   Call `mathhub_search_claims` with the most discriminative mathematical terms, theorem name, or Lean identifier available.
-   - Prefer one precise query.
-   - If terminology is ambiguous, try a small number of materially different queries.
-   - A search hit is only a recorded Claim candidate, not a verification verdict.
+2. **Search the existing mathematics before constructing a proof.**
+   Search recorded Claims with `mathhub_search_claims` when durable MathHub records may already exist.
+   Search the installed read-only Mathlib library with `mathhub_browse_library` when the theorem may simply already be present upstream.
+   - Mathlib is already part of MathHub's library substrate; finding a theorem there is not an import/add operation.
+   - Prefer one precise namespace/query when possible.
+   - A recorded Claim, a library theorem, and a successful Build are distinct facts.
 
-3. **Inspect plausible existing Claims.**
-   For a plausible result, call `mathhub_read_claim`.
-   Use `mathhub_read_argument`, `mathhub_read_graph`, or `mathhub_find_path` only when dependency or proof-route evidence is relevant.
-   Check the exact statement, assumptions, formal binding, Proof records, Build state, and environment before relying on it.
+3. **Open the theorem and walk dependencies directly.**
+   Use `mathhub_read_theorem` for the mathematical/source presentation.
+   Use `mathhub_read_dependencies` for direct Lean declaration/proof dependencies.
+   When several visible dependency nodes are likely to be traversed, call `mathhub_prefetch_dependencies` once for that bounded frontier instead of making the user or agent wait for one inspect per step.
+   Dependency arrows mean dependent -> dependency; module ownership is not a dependency edge.
 
-4. **Reuse verified mathematics when it actually matches.**
-   If an existing Claim has a successful canonical Lean-backed Build for the required statement and environment, reuse it instead of generating a duplicate proof.
-   Do not treat graph adjacency, registration, or a human-readable argument as equivalent to Lean verification.
+4. **Inspect durable Claim evidence only when that layer matters.**
+   If a matching recorded Claim exists, call `mathhub_read_claim`.
+   Use `mathhub_read_argument`, `mathhub_read_graph`, or `mathhub_find_path` only when recorded Claim/Proof route evidence is relevant.
+   A library theorem does not need to be materialized as a Claim merely to browse, understand, or follow its Lean dependencies.
 
-5. **Import an existing Lean theorem when appropriate.**
-   If the required theorem already exists in the available Lean environment but is not yet represented as a MathHub Claim, use `mathhub_import_declaration`.
-   Use `mathhub_import_closure` only when the dependency closure is useful for the task. Its current host-neutral MCP contract takes plural `declaration_names` so one request can name one or more roots; use `max_depth` and `max_claims` to keep closure expansion explicitly bounded.
-   Importing a closure records/imports declarations; it does not itself verify them. Preserve the external declaration identity and use MathHub's canonical Lean-backed Build result for verification status.
+5. **Reuse existing mathematics when it actually matches.**
+   If the theorem exists in Mathlib, use the library theorem directly for discovery and dependency traversal.
+   If an existing Claim has a successful canonical Lean-backed Build for the required statement and environment, that Build is the durable MathHub verification evidence.
+   Do not treat graph adjacency, registration, source presence, or a human-readable presentation as equivalent to a successful Build.
 
-6. **Create a new Claim only when needed.**
+6. **Materialize an existing Lean theorem only for a real workspace-record need.**
+   `mathhub_import_declaration` and `mathhub_import_closure` are advanced compatibility/materialization operations. Do not use them as the normal way to "open" Mathlib.
+   Use them only when the task specifically needs a durable Claim/Proof/Build record for an already-existing declaration.
+   Keep closure expansion explicitly bounded.
+
+7. **Add new Lean only when new source is being contributed.**
+   Use `mathhub_add_lean_source` for user-provided Lean text or a public source URL. This is the Add Lean path.
+   Existing Mathlib theorems are already in the library and should not be re-added just to inspect them.
+
+8. **Create a new Claim only when needed.**
    If no suitable existing or importable theorem matches and formal verification is appropriate:
    - call `mathhub_register_claim` with the exact statement/formal declaration and useful metadata;
    - construct a Proof candidate;
@@ -58,11 +70,11 @@ Do not invoke this workflow merely for:
 
    Do not fill MathHub with disposable scratch lemmas unless they are necessary to establish the material claim or have independent reuse value.
 
-7. **Let Lean decide the proof result.**
+9. **Let Lean decide the proof result.**
    A registered Proof is a candidate. Report it as verified only when the canonical MathHub Build records success.
    If the build fails, is unavailable, or the environment is mismatched, preserve that status explicitly. Never rewrite failure into success from model judgment.
 
-8. **Preserve Testamur semantic boundaries.**
+10. **Preserve Testamur semantic boundaries.**
    MathHub owns Claim / Proof / ProofDependency and Lean-backed mathematical verification.
    Testamur owns observable provenance, source revisions, explicit reliance, revalidation, and downstream impact workflows.
    Keep these invariants:
@@ -79,8 +91,10 @@ Do not invoke this workflow merely for:
 
 When MathHub materially affects the answer, report the relevant Claim / Proof / Build identities and the actual Build status when available. Distinguish:
 
-- reused existing verified Claim;
-- imported existing Lean declaration;
+- reused an existing Mathlib theorem for read-only mathematics/dependency traversal;
+- reused an existing verified Claim;
+- materialized an existing Lean declaration because a durable workspace record was actually required;
+- added new user-provided Lean source;
 - newly registered Claim with successful Build;
 - proof candidate not yet verified;
 - failed or unavailable Build.
