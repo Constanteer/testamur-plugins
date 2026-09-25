@@ -55,7 +55,8 @@ Do not invoke this workflow merely for:
 6. **Materialize an existing Lean theorem only for a real workspace-record need.**
    `mathhub_import_declaration` and `mathhub_import_closure` are advanced compatibility/materialization operations. Do not use them as the normal way to "open" Mathlib.
    Use them only when the task specifically needs a durable Claim/Proof/Build record for an already-existing declaration.
-   Keep closure expansion explicitly bounded.
+   For closure materialization, pass plural `declaration_names` and keep `max_depth` / `max_claims` explicitly bounded.
+   Importing a closure records/imports declarations; it does not itself verify them.
 
 7. **Add new Lean only when new source is being contributed.**
    Use `mathhub_add_lean_source` for user-provided Lean text or a public source URL. This is the Add Lean path.
