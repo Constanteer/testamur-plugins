@@ -4,6 +4,10 @@ Official integrations for Testamur.
 
 This repository contains thin host adapters that connect coding agents and developer tools to the Testamur provenance, source-revision and revalidation model. The integrations do **not** implement a second Testamur runtime.
 
+- **Testamur:** https://testamur.org
+- **Core repository:** https://github.com/Constanteer/testamur
+- **Hosted integrations page:** https://testamur.org/integrations
+
 ## Available integration
 
 ### Codex
@@ -23,6 +27,14 @@ It provides:
 
 It does not capture hidden model reasoning and it does not turn source exposure into durable reliance.
 
+### Distribution status
+
+The Codex plugin is available from this GitHub repository and is intended to be installed from an inspectable release/tag or exact revision.
+
+It is **not currently listed in Codex's host-operated marketplace or other third-party plugin marketplaces**. The maintainer is under 18 and cannot yet complete some publisher/account eligibility steps required for those listings. This is a distribution and discovery limitation, not a runtime limitation: the plugin, hooks, MCP launchers and Testamur integration are usable directly from this repository.
+
+GitHub Releases are the canonical reproducible distribution boundary until host-operated marketplace listings become available.
+
 ## 5-minute first run
 
 Use one environment for Testamur core, the plugin doctor, and the Codex process. The shortest launch path is:
@@ -35,11 +47,11 @@ command -v testamur-gateway-mcp
 # 2. From this repository, validate host wiring.
 python plugins/testamur-codex/scripts/doctor.py
 
-# 3. Register the official marketplace.
+# 3. Add this GitHub repository as a Codex marketplace source.
 codex plugin marketplace add Constanteer/testamur-plugins
 ```
 
-Install **testamur-codex** from the Codex plugin manager, then start a **fresh Codex session from that same environment**. In the fresh session, ask Codex to fetch a documentation source through Testamur and preserve the exact revision used. Inspect the resulting observable provenance before adding any durable reliance claim. For mathematical work, try a task that depends on a nontrivial invariant or equivalence: the packaged skill should search MathHub first, reuse/import existing Lean-checked mathematics when possible, and require a canonical Lean Build before reporting a generated proof as verified.
+Install **testamur-codex** from that repository-backed marketplace source, then start a **fresh Codex session from the same environment**. In the fresh session, ask Codex to fetch a documentation source through Testamur and preserve the exact revision used. Inspect the resulting observable provenance before adding any durable reliance claim. For mathematical work, try a task that depends on a nontrivial invariant or equivalence: the packaged skill should search MathHub first, reuse/import existing Lean-checked mathematics when possible, and require a canonical Lean Build before reporting a generated proof as verified.
 
 The first run has three deliberately separate facts:
 
@@ -74,15 +86,15 @@ The doctor checks installation wiring only. Availability does not verify a sourc
 
 ## Install the Codex plugin
 
-Add this repository as a Codex plugin marketplace:
+Because there is no host-operated marketplace listing yet, add this GitHub repository directly as a Codex marketplace source:
 
 ```bash
 codex plugin marketplace add Constanteer/testamur-plugins
 ```
 
-Then install **testamur-codex** from the Codex plugin manager.
+Then install **testamur-codex** from that source.
 
-For reproducible environments, pin the marketplace to a release tag or exact commit instead of following the default branch.
+For reproducible environments, use a published GitHub Release/tag or exact commit instead of following the mutable default branch. A future host-operated marketplace listing should remain traceable back to the same inspectable release.
 
 ## Verify
 
@@ -148,7 +160,7 @@ The package-level documentation in [plugins/testamur-codex/README.md](plugins/te
 
 The initial annotated tag is **v1.0.0**. Current `main` prepares **v1.1.0**, which adds the Project supply-chain/advisory MCP surface, host-neutral MathHub MCP, repository-binding lifecycle tools, and stricter first-run doctor checks.
 
-GitHub Releases are the reproducible distribution boundary for this repository. Do not move or reuse `v1.0.0`; publish a new `v1.1.0` tag/Release for the current package, and keep marketplace installs traceable to that inspectable release or exact commit.
+GitHub Releases are the reproducible distribution boundary for this repository. Host-operated marketplace listings are not currently available for this project because of the maintainer's age/account eligibility constraints; when they become available, they should remain a discovery/install layer over the same inspectable GitHub release rather than a separate authority.
 
 ## License
 
