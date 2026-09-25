@@ -164,7 +164,7 @@ GitHub Releases are the reproducible distribution boundary for this repository. 
 
 ## Maintainer and development note
 
-This project is maintained by a senior high school student alongside school and exams. During high-pressure academic periods, responses to issues, pull requests, and marketplace work may be slower.
+This project is built and maintained by a senior high school student, with extensive AI assistance, alongside school and exams. During high-pressure academic periods, responses to issues, pull requests, and marketplace work may be slower.
 
 AI tools have been used extensively for implementation, integration work, tests, documentation, and review. The maintainer remains responsible for architecture, release decisions, and the published package. AI output is not treated as proof that an integration is correct or safe; the repository keeps executable tests, doctor checks, inspectable source, and release-pinned distribution paths for that reason.
 
