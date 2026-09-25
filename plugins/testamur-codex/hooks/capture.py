@@ -3,9 +3,10 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 
 
-def _repo_root() -> Path | None:
+def _repo_root() -> Optional[Path]:
     # Development/local-marketplace fallback. Installed marketplace copies should
     # normally resolve the packaged console entry point or importable package.
     plugin_root = Path(os.environ.get("PLUGIN_ROOT") or Path(__file__).resolve().parents[1])
@@ -22,7 +23,7 @@ def _plugin_root() -> Path:
     return Path(__file__).resolve().parents[1]
 
 
-def _register_monitor_provider_manifest() -> Path | None:
+def _register_monitor_provider_manifest() -> Optional[Path]:
     source = _plugin_root() / "testamur-monitor-providers.json"
     if not source.is_file():
         return None
