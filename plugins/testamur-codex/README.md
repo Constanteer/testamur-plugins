@@ -6,7 +6,7 @@ It adds four things:
 
 1. lifecycle hooks capture **observable** WorkSession/tool events;
 2. local MCP servers expose exact Testamur source/Project operations and MathHub Claim/Proof/Build operations;
-3. a `mathhub-proof-workflow` skill teaches Codex to search before proving, reuse/import existing mathematics when possible, and require canonical Lean build evidence before calling a generated proof verified;
+3. a `mathhub-proof-workflow` skill teaches Codex to browse the existing Mathlib substrate and dependency graph before proving, prefetch dependency frontiers for smooth traversal, add new Lean only for user-provided source, and require canonical Lean build evidence before calling a generated proof verified;
 4. a declarative `github_branch` monitor provider lets Testamur Projects add GitHub branch monitors without the plugin owning Watch or Project semantics.
 
 It intentionally does **not** capture hidden model reasoning and does not turn exposure/fetch into durable reliance. Project supply-chain changes are mechanical observations: `changed != invalid`, and advisory candidate lineage is not an affectedness verdict.
@@ -63,12 +63,15 @@ Its preferred sequence is:
 
 ```text
 formulate obligation
-→ mathhub_search_claims
-→ inspect plausible Claim / Proof / Build evidence
-→ reuse an existing Lean-built Claim when it exactly matches
-   or import an existing Lean theorem
+→ search recorded Claims and/or browse the read-only Mathlib library
+→ mathhub_read_theorem
+→ mathhub_read_dependencies
+→ mathhub_prefetch_dependencies for the likely next frontier
+→ reuse existing mathematics directly when it matches
+   or materialize an existing declaration only when a durable workspace record is required
+   or mathhub_add_lean_source for genuinely new user-provided Lean
    or register a new Claim + Proof candidate
-→ mathhub_build_proof
+→ mathhub_build_proof when durable verification evidence is required
 → report the actual canonical Build result
 ```
 
@@ -120,7 +123,7 @@ Then:
 
 For the proof workflow, try:
 
-> This refactor relies on a nontrivial invariant. Check MathHub before proving it yourself; reuse or import existing Lean-checked mathematics if it matches, otherwise create a proof candidate and build it.
+> This refactor relies on a nontrivial invariant. Check MathHub before proving it yourself; browse existing Mathlib and its dependency graph first, prefetch the next dependency frontier if useful, and only materialize or add new Lean when the task actually needs a workspace record or new source.
 
 A fetched source must not automatically become a durable reliance, a dependency delta must not automatically become an invalidity or vulnerability verdict, and a recorded MathHub Claim or Proof candidate must not be described as verified without a successful canonical Lean-backed Build.
 
