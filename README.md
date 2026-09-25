@@ -162,6 +162,12 @@ The initial annotated tag is **v1.0.0**. Current `main` prepares **v1.1.0**, whi
 
 GitHub Releases are the reproducible distribution boundary for this repository. Host-operated marketplace listings are not currently available for this project because of the maintainer's age/account eligibility constraints; when they become available, they should remain a discovery/install layer over the same inspectable GitHub release rather than a separate authority.
 
+## Maintainer and development note
+
+This project is maintained by a full-time student alongside school and exams. During high-pressure academic periods, responses to issues, pull requests, and marketplace work may be slower.
+
+AI tools have been used extensively for implementation, integration work, tests, documentation, and review. The maintainer remains responsible for architecture, release decisions, and the published package. AI output is not treated as proof that an integration is correct or safe; the repository keeps executable tests, doctor checks, inspectable source, and release-pinned distribution paths for that reason.
+
 ## License
 
 Testamur Plugins is licensed under the [Apache License 2.0](LICENSE).
