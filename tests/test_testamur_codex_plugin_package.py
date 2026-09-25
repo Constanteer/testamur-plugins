@@ -46,6 +46,11 @@ def test_codex_plugin_packages_mathhub_first_proof_workflow() -> None:
     assert "Search MathHub before constructing a new proof." in skill
     for tool in (
         "mathhub_search_claims",
+        "mathhub_browse_library",
+        "mathhub_read_theorem",
+        "mathhub_read_dependencies",
+        "mathhub_prefetch_dependencies",
+        "mathhub_add_lean_source",
         "mathhub_read_claim",
         "mathhub_import_declaration",
         "mathhub_register_claim",
