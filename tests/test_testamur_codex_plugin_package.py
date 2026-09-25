@@ -43,7 +43,7 @@ def test_codex_plugin_packages_mathhub_first_proof_workflow() -> None:
         PLUGIN / "skills" / "mathhub-proof-workflow" / "SKILL.md"
     ).read_text(encoding="utf-8")
     assert "name: mathhub-proof-workflow" in skill
-    assert "Search MathHub before constructing a new proof." in skill
+    assert "Search the existing mathematics before constructing a proof." in skill
     for tool in (
         "mathhub_search_claims",
         "mathhub_browse_library",
