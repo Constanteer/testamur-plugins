@@ -7,6 +7,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
+from typing import Optional
 
 
 def _plugin_root() -> Path:
@@ -163,7 +164,7 @@ def _render_human(report: dict[str, object]) -> str:
     return "\n".join(lines)
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Check whether Testamur core, project/repository-binding MCP, MathHub MCP, and the Codex plugin are ready for a fresh Codex session.")
     parser.add_argument("--json", action="store_true", help="emit the machine-readable doctor report")
     args = parser.parse_args(argv)
